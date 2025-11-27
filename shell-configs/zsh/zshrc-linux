@@ -1,9 +1,17 @@
-# ~/.bashrc for Debian
+# ~/.zshrc for Linux
 
-# Colors for prompt
-PS1='\[\e[36m\]\w\[\e[0m\] \[\e[33m\]$(git branch 2>/dev/null | grep "*" | sed "s/* //")\[\e[0m\] \[\e[32m\]$\[\e[0m\] '
+source ~/bin/shell-configs/colors.sh
 
-# Aliases
+autoload -Uz vcs_info
+precmd() { vcs_info }
+
+setopt PROMPT_SUBST
+
+PROMPT_SYMBOL="$ZSH_GREEN❯$ZSH_RESET"
+GIT_BRANCH='${vcs_info_msg_0_}'
+
+export PS1="${ZSH_CYAN}%~${ZSH_RESET} ${ZSH_YELLOW}${GIT_BRANCH}${ZSH_RESET} ${PROMPT_SYMBOL} "
+
 alias ll='ls -lh --color=auto'
 alias la='ls -lha --color=auto'
 alias gs='git status'
@@ -27,9 +35,7 @@ alias pk='pkill -i'
 alias k9='kill -9'
 alias k9n='kill -9 $(pgrep -f)'
 
-
-# Install script for Debian: only install if missing
-function install_tools_debian_once() {
+function install_tools_linux_once() {
   local pkgs=(coreutils git bat exa fd-find ripgrep fzf htop tldr thefuck ncdu glow btop)
   local missing=()
   for pkg in "${pkgs[@]}"; do
@@ -43,8 +49,7 @@ function install_tools_debian_once() {
     sudo apt install -y "${missing[@]}"
   fi
 }
-# Auto-install missing tools only once per session
-if [ -z "$BASHRC_DEBIAN_TOOLS_INSTALLED" ]; then
-  install_tools_debian_once
-  export BASHRC_DEBIAN_TOOLS_INSTALLED=1
+if [ -z "$ZSHRC_LINUX_TOOLS_INSTALLED" ]; then
+  install_tools_linux_once
+  export ZSHRC_LINUX_TOOLS_INSTALLED=1
 fi
